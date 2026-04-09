@@ -323,9 +323,14 @@ namespace Sandbox.UI
 		}
 		private Styles HtmlStyleLookup( INode node )
 		{
-			if ( node.GetAttribute( "style", null ) is string styles )
+            Styles s = null;
+
+            if ( node.GetAttribute( "style", null ) is string styles )
 			{
-				Log.Warning( "TODO: Apply Html Styles" );
+                s = new Styles();
+                var p = new Parse(styles);
+
+                StyleParser.ParseStyles(ref p, s);
 			}
 
 			var blocks = AllStyleSheets
@@ -335,11 +340,11 @@ namespace Sandbox.UI
 							.ToList();
 
 			if ( blocks.Count == 0 )
-				return null;
+				return s;
+
+            s ??= new Styles();
 
 			blocks.Sort( StyleOrderer.Instance );
-
-			var s = new Styles();
 
 			foreach ( var entry in blocks )
 			{
